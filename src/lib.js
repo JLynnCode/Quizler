@@ -70,7 +70,7 @@ export const createQuestions = (obj = {}) => {
 
     for(let i = 0; i<= keys.length; i++){
 
-      if(keys[i].includes(`question-${(c)}-choice`)){
+      if(/`question-${(c)}-choice`/.test(keys[i])){
 
         currentChoices.push(obj[keys[i]]);
       }
@@ -82,7 +82,7 @@ export const createQuestions = (obj = {}) => {
   for(let q = 1; q <= keys.length; q++){
 
     //if the next key is undefined, this index includes the current question number = create new question
-    if(keys[q] === undefined || keys[q-1].includes(`question-${(q)}`)){
+    if(keys[q] === undefined || /`question-${(q)}`/.test(keys[q-1])){
 
       createdQuestions.push({
 
