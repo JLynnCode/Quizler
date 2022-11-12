@@ -1,20 +1,5 @@
 import fs from 'fs'
 
-// takes 2 parameters, array and numItems
-
-// array should default to an empty array
-// if array has length 0 or 1, then simply return it
-
-// numItems must be checked to ensure it is a number in the range 1 to array.length(inclusive)
-// if numItems is outside the correct range, then it should be set to a random number within the correct range
-
-// should always return an array
-// should not mutate the array passed in
-// should return a random array if possible (size > 1)
-// should return an array of the passed in length
-
-// takes a numItems amount of randomly selected unique items from array, and stores them in a new array
-// returns the new array
 export const chooseRandom = (array = [], numItems) => {
 
   let uniqueRandomItems = [];
@@ -40,10 +25,8 @@ export const chooseRandom = (array = [], numItems) => {
   return uniqueRandomItems;
 }
 
-// 1) Should return an array even if passed in undefined or no object
-// 2) Should always have at least one question and two choices with it
-// 3) Should default to 1 question and 2 choices
-// 4) Should always return an array of length numQuestions + (numQuestions * numChoices)
+//========================================================================================================================================
+
 export const createPrompt = ({numQuestions = 1, numChoices = 2} = {}) => {
   
   let createdPrompt = [];
@@ -62,12 +45,6 @@ export const createPrompt = ({numQuestions = 1, numChoices = 2} = {}) => {
 
   for(let questionNumber = 1; questionNumber <= numQuestions; questionNumber++){
 
-    // createdPrompt.push({
-    //   type: 'input',
-    //   name: `question-${(questionNumber)}`,
-    //   message: `Enter question ${(questionNumber)}`
-    // });
-
     createdPrompt.push(createQuestionPrompt(questionNumber));
 
       for(let choiceNumber = 1; choiceNumber <= numChoices; choiceNumber++){
@@ -78,12 +55,49 @@ export const createPrompt = ({numQuestions = 1, numChoices = 2} = {}) => {
   return createdPrompt;
 }
 
-// 5) Should return an array even if passed in undefined or no object
-// 6) Should return an empty array if no object is provided
-// 7) Should return question objects with their corresponding question and choices
-export const createQuestions = () => {
-  // TODO implement createQuestions
+//========================================================================================================================================
+
+export const createQuestions = (obj = {}) => {
+  
+  let createdQuestions = [];
+  let keys = Object.keys(obj);
+  let currentChoices = [];
+
+  //search for choices of the current question & store in an array
+  function getChoices(c){
+
+    currentChoices = [];
+
+    for(let i = 0; i<= keys.length; i++){
+
+      if(keys[i].includes(`question-${(c)}-choice`)){
+
+        currentChoices.push(obj[keys[i]]);
+      }
+    }
+    return currentChoices;
+  }
+
+  //loops through keys of received object
+  for(let q = 1; q <= keys.length; q++){
+
+    //if the next key is undefined, this index includes the current question number = create new question
+    if(keys[q] === undefined || keys[q-1].includes(`question-${(q)}`)){
+
+      createdQuestions.push({
+
+        type: 'list',
+        name: keys[q-1],
+        message: obj[keys[q-1]],
+        choices: getChoices(q)
+      });
+    }
+  }
+
+  return createdQuestions;
 }
+
+//========================================================================================================================================
 
 export const readFile = path =>
   new Promise((resolve, reject) => {
